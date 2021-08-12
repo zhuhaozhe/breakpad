@@ -90,11 +90,15 @@ elseif(UNIX)
 	add_definitions(-DHAVE_A_OUT_H)
 	set(CLIENT_SRC_DIR ${BREAKPAD_SRC_DIR}/client/linux)
 	include_directories(${BREAKPAD_SRC_DIR} ${BREAKPAD_SRC_DIR}/third_party/linux/include)
+	set_property(SOURCE ${BREAKPAD_SRC_DIR}/common/linux/breakpad_getcontext.S PROPERTY LANGUAGE C)
 	set(BREAKPADCOMMON_LIB_SRCS
 		${BREAKPAD_SRC_DIR}/common/convert_UTF.cc
 		${BREAKPAD_SRC_DIR}/common/linux/file_id.cc
 		${BREAKPAD_SRC_DIR}/common/linux/guid_creator.cc
 		${BREAKPAD_SRC_DIR}/common/linux/memory_mapped_file.cc
+		${BREAKPAD_SRC_DIR}/common/linux/linux_libc_support.cc
+		${BREAKPAD_SRC_DIR}/common/linux/breakpad_getcontext.S
+		${BREAKPAD_SRC_DIR}/common/linux/elfutils.cc
 		${BREAKPAD_SRC_DIR}/common/linux/safe_readlink.cc
 		${BREAKPAD_SRC_DIR}/common/string_conversion.cc
 	)
@@ -105,10 +109,15 @@ elseif(UNIX)
 		${CLIENT_SRC_DIR}/../minidump_file_writer.cc
 		${CLIENT_SRC_DIR}/crash_generation/crash_generation_client.cc
 		${CLIENT_SRC_DIR}/handler/exception_handler.cc
+		${CLIENT_SRC_DIR}/handler/minidump_descriptor.cc
 		${CLIENT_SRC_DIR}/log/log.cc
 		${CLIENT_SRC_DIR}/minidump_writer/linux_dumper.cc
 		${CLIENT_SRC_DIR}/minidump_writer/linux_ptrace_dumper.cc
 		${CLIENT_SRC_DIR}/minidump_writer/minidump_writer.cc
+		${CLIENT_SRC_DIR}/microdump_writer/microdump_writer.cc
+		${CLIENT_SRC_DIR}/dump_writer_common/ucontext_reader.cc
+		${CLIENT_SRC_DIR}/dump_writer_common/thread_info.cc
+		# ${CLIENT_SRC_DIR}/minidump_writer/.cc
 	)
 	
 	set(DUMPSYMS_SRCS
@@ -128,12 +137,12 @@ elseif(UNIX)
 	)
 endif()
 
-add_library(breakpad_common ${BREAKPADCOMMON_LIB_SRCS})
+add_library(breakpad_common STATIC ${BREAKPADCOMMON_LIB_SRCS})
 target_link_libraries(breakpad_common ${BREAKPADCOMMON_LIBS})
 
 # breakpad - client library for capturing minidumps when a crash
 # occurs
-add_library(breakpad ${BREAKPAD_LIB_SRCS})
+add_library(breakpad STATIC ${BREAKPAD_LIB_SRCS})
 target_link_libraries(breakpad breakpad_common)
 
 if(APPLE)
