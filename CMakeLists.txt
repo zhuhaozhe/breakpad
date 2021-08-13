@@ -5,6 +5,7 @@ set(BREAKPAD_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set (CMAKE_CXX_STANDARD 14)
 
 if(WIN32)
+		add_definitions(-DUNICODE -D_UNICODE)
 		add_definitions(-D_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS)
         set(DEBUG_ACCESS_SDK_DIR "$ENV{VSINSTALLDIR}/DIA SDK")
         if (NOT (EXISTS "${DEBUG_ACCESS_SDK_DIR}"))
@@ -29,7 +30,9 @@ if(WIN32)
 			${CLIENT_SRC_DIR}/crash_generation/crash_generation_server.cc
 			${CLIENT_SRC_DIR}/crash_generation/minidump_generator.cc
 		)
-        ide_group_sources("${BREAKPAD_LIB_SRCS}")
+        # ide_group_sources("${BREAKPAD_LIB_SRCS}")
+		source_group("Sources" FILES ${BREAKPAD_LIB_SRCS})
+
 
         set(DUMPSYMS_SRCS
                 # pdb_source_line_writer.cc is linked into the `dump_syms` target rather than
