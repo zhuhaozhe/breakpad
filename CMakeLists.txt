@@ -1,5 +1,5 @@
 project(breakpad)
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 set(BREAKPAD_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set (CMAKE_CXX_STANDARD 14)
